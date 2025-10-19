@@ -1,249 +1,402 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Diwali!</title>
-    
-    <style>
-        /* --- CSS STYLES (The Beauty and Animation) --- */
-        
-        /* --- General Styling --- */
-        body {
-            background: linear-gradient(to top, #0f0030, #1f0a50); /* Deep night sky background */
-            color: #ffd700; /* Gold text */
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden; /* Prevent scrollbar from animations */
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Diwali — Rangoli & Peacock</title>
+  <style>
+    :root{
+      --bg:#0b1020; /* deep night */
+      --accent:#ffd166; /* diya flame */
+      --peacock1:#1ea7b8;
+      --peacock2:#2d6a4f;
+      --rangoli:#ff7b7b;
+      --glass: rgba(255,255,255,0.06);
+    }
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,200,150,0.03), transparent), linear-gradient(180deg,var(--bg),#061022 60%);
+      color:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:20px;
+    }
 
-        /* --- Greeting Message --- */
-        .greeting-container {
-            text-align: center;
-            z-index: 10;
-            padding: 20px;
-        }
+    /* container */
+    .card{
+      width:min(1100px,98vw);height:min(760px,92vh);position:relative;border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(2,6,23,0.8);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));backdrop-filter: blur(6px);border:1px solid rgba(255,255,255,0.04);
+    }
 
-        #diwali-greeting {
-            font-size: 3.5rem;
-            font-family: 'Georgia', serif;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px #ff4500, 0 0 20px #ff4500; /* Fiery glow */
-            animation: pulse 2s infinite alternate;
-        }
+    /* Top Controls */
+    .controls{position:absolute;left:20px;top:20px;z-index:30;display:flex;gap:12px;align-items:center}
+    .chip{background:var(--glass);padding:10px 14px;border-radius:999px;font-weight:600;letter-spacing:0.6px;font-size:14px}
+    .input{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:inherit;outline:none;min-width:320px}
+    .btn{background:linear-gradient(90deg,#ffb86b,#ff6b6b);border:none;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.08)}
 
-        .sender-message {
-            font-size: 1.2rem;
-            margin-top: -10px;
-            color: #ffcc99;
-        }
+    /* center stage */
+    .stage{position:absolute;inset:0;display:grid;place-items:center}
+    .canvas-wrap{position:absolute;inset:0;z-index:1}
+    canvas#fireworks{width:100%;height:100%;display:block}
 
-        @keyframes pulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.05); }
-        }
+    /* rangoli card */
+    .rangoli-card{position:relative;z-index:6;width:min(760px,86vw);height:min(560px,72vh);display:grid;place-items:center}
 
-        /* --- Peacock Rangoli Styling --- */
-        .rangoli-container {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 300px;
-            z-index: 5;
-        }
+    /* greeting area */
+    .greeting{position:absolute;left:50%;transform:translateX(-50%);bottom:34px;z-index:50;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .greeting h1{margin:0;font-size:42px;letter-spacing:1px;text-transform:uppercase;text-shadow:0 4px 26px rgba(0,0,0,0.7)}
+    .subtitle{font-size:14px;opacity:0.9}
 
-        /* Peacock Head and Body */
-        .peacock-head, .peacock-body {
-            position: absolute;
-            background: #0077b6; /* Blue body color */
-            border-radius: 50%;
-        }
+    /* typing text */
+    .typebox{font-family: 'Segoe UI', Roboto, system-ui; font-weight:800; font-size:36px;background:linear-gradient(90deg,#fff,#ffd166);-webkit-background-clip:text;background-clip:text;color:transparent}
 
-        .peacock-head {
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 50px;
-            border-top-right-radius: 100%;
-            border-top-left-radius: 100%;
-        }
+    /* floating diyas */
+    .diya{position:absolute;bottom:20px;z-index:4;filter:drop-shadow(0 8px 26px rgba(255,150,80,0.14));}
+    .diya svg{width:110px;height:110px}
+    .lantern{position:absolute;top:40px;left:30px;z-index:6;transform-origin:center}
 
-        .peacock-body {
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 150px;
-            border-radius: 50% 50% 0 0;
-        }
+    /* twinkling lights */
+    .lights{position:absolute;top:0;left:0;right:0;height:120px;z-index:45;display:flex;align-items:center;justify-content:center;pointer-events:none}
+    .string{width:92%;height:2px;background:linear-gradient(90deg,transparent,#ffd166,transparent);opacity:0.06}
+    .bulb{position:absolute;width:8px;height:8px;border-radius:50%;box-shadow:0 0 10px rgba(255,210,100,0.7);opacity:0.85}
 
-        /* Peacock Tail (The main Rangoli effect) */
-        .peacock-tail {
-            position: absolute;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            /* Subtle spinning animation */
-            animation: spin 15s linear infinite;
-        }
+    /* small info */
+    .footer{position:absolute;right:18px;bottom:18px;color:rgba(255,255,255,0.6);font-size:12px;z-index:50}
 
-        @keyframes spin {
-            from { transform: translateX(-50%) rotate(0deg); }
-            to { transform: translateX(-50%) rotate(360deg); }
-        }
+    /* responsivity */
+    @media (max-width:720px){
+      .controls{left:12px;right:12px;top:12px;flex-direction:column;gap:8px}
+      .input{min-width:180px}
+      .greeting h1{font-size:28px}
+      .typebox{font-size:20px}
+      .diya svg{width:72px;height:72px}
+    }
 
-        /* Creating the Feathers using ::before and ::after */
-        .peacock-tail::before,
-        .peacock-tail::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            box-shadow: 
-                150px 0 0 -15px #ff4500, /* Red */
-                -150px 0 0 -15px #00a676, /* Green */
-                0 150px 0 -15px #ff69b4, /* Pink */
-                0 -150px 0 -15px #ffd700, /* Gold */
-                106px 106px 0 -15px #4cc9f0, /* Blue-Cyan */
-                -106px -106px 0 -15px #f72585, /* Magenta */
-                -106px 106px 0 -15px #480ca8, /* Purple */
-                106px -106px 0 -15px #ff8c00; /* Orange */
-            
-            /* Animation for feather flicker/glow */
-            animation: feather-glow 4s infinite ease-in-out alternate;
-        }
+    /* SVG animations */
+    .peacock-part{transform-origin:center;animation:float 6s ease-in-out infinite}
+    @keyframes float{0%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-6px) rotate(-2deg)}100%{transform:translateY(0) rotate(0deg)}}
 
-        .peacock-tail::after {
-            /* Slightly offset to create depth and more color */
-            transform: rotate(22.5deg); 
-            box-shadow: 
-                150px 0 0 -10px #ff8c00, 
-                -150px 0 0 -10px #480ca8, 
-                0 150px 0 -10px #f72585, 
-                0 -150px 0 -10px #4cc9f0, 
-                106px 106px 0 -10px #ffd700, 
-                -106px -106px 0 -10px #ff69b4, 
-                -106px 106px 0 -10px #00a676, 
-                106px -106px 0 -10px #ff4500;
-        }
+    /* subtle glow around rangoli */
+    .glow{position:absolute;inset:0;z-index:2;filter:blur(36px);opacity:0.26}
 
-        @keyframes feather-glow {
-            0% { opacity: 0.8; filter: brightness(1); }
-            50% { opacity: 1; filter: brightness(1.5); }
-            100% { opacity: 0.8; filter: brightness(1); }
-        }
-
-        /* --- Firework/Sparkle Animation Styling --- */
-        .fireworks-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Allows clicking through the container */
-            z-index: 8;
-        }
-
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background-color: #ffffff;
-            border-radius: 50%;
-            opacity: 0;
-            box-shadow: 0 0 5px #ffeb3b, 0 0 10px #fff;
-            animation: firework 1s ease-out forwards;
-        }
-
-        @keyframes firework {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--x), var(--y)) scale(0.5);
-            }
-        }
-    </style>
+  </style>
 </head>
 <body>
+  <div class="card" role="main">
 
-    <div class="greeting-container">
-        <h1 id="diwali-greeting">Happy Diwali!</h1>
-        <p class="sender-message">Wishing you and your family a year filled with light, prosperity, and joy!</p>
+    <div class="controls" aria-hidden="false">
+      <div class="chip">Happy Diwali — Share the joy ✨</div>
+      <input id="nameInput" class="input" placeholder="Enter names, comma-separated — e.g. Asha, Raj, Meera" value="Asha, Raj, Meera, Family" />
+      <button id="playBtn" class="btn">Play</button>
+      <button id="stopBtn" class="btn secondary">Stop</button>
+      <button id="downloadBtn" class="btn secondary">Download PNG</button>
     </div>
 
-    <div class="rangoli-container">
-        <div class="peacock-head"></div>
-        <div class="peacock-body"></div>
-        <div class="peacock-tail">
-            </div>
+    <!-- twinkling lights -->
+    <div class="lights" aria-hidden="true">
+      <div class="string"></div>
+      <!-- bulbs will be generated by JS -->
     </div>
 
-    <div class="fireworks-container"></div>
-      <script>
-        // --- JAVASCRIPT CODE (The Dynamics) ---
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Dynamic Greeting Message
-            
-            // ⭐ CUSTOMIZE HERE: Change the name in the quotes below!
-            const recipientName = "My All Frnds"; 
-            // Example: "My Family", "Frnds and Family", or "Dearest Sneha"
+    <div class="stage">
+      <div class="canvas-wrap"><canvas id="fireworks"></canvas></div>
 
-            const greetingElement = document.getElementById('diwali-greeting');
-            greetingElement.textContent = `Happy Diwali to my all Frnds and Family members!`;
+      <div class="rangoli-card" aria-hidden="false">
+        <!-- glow layer -->
+        <div class="glow" style="background:radial-gradient(circle at 50% 45%, rgba(255,200,120,0.12), transparent 25%), radial-gradient(circle at 30% 70%, rgba(30,167,184,0.06), transparent 22%);"></div>
 
+        <!-- SVG Rangoli / Peacock -->
+        <svg class="peacock" viewBox="0 0 700 520" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Peacock rangoli">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0" stop-color="#1ea7b8"/>
+              <stop offset="1" stop-color="#2d6a4f"/>
+            </linearGradient>
+          </defs>
 
-            // 2. Sparkling / Firework Effect
+          <!-- Outer feathers - multiple paths for layered look -->
+          <g transform="translate(350,260)">
+            <!-- radial feather rings -->
+            <!-- We'll draw multiple layered petals -->
+            <!-- Use JS-like approach: but purely SVG; subtle animation by CSS class peacock-part on groups -->
+            <g class="peacock-part" style="animation-duration:8s">
+              <g stroke="url(#g1)" fill="none" stroke-width="6" stroke-linecap="round">
+                <path d="M0 -20 C 120 -80 200 -40 250 30 C 200 100 120 140 0 160 C -120 140 -200 100 -250 30 C -200 -40 -120 -80 0 -20 Z" opacity="0.12"/>
+                <path d="M0 -12 C 100 -60 170 -30 210 20 C 170 70 100 100 0 120 C -100 100 -170 70 -210 20 C -170 -30 -100 -60 0 -12 Z" opacity="0.14"/>
+                <path d="M0 0 C 80 -40 140 -20 180 12 C 140 44 80 64 0 76 C -80 64 -140 44 -180 12 C -140 -20 -80 -40 0 0 Z" opacity="0.2"/>
+              </g>
+            </g>
 
-            const fireworksContainer = document.querySelector('.fireworks-container');
+            <!-- decorative small petals around -->
+            <g class="peacock-part" style="animation-duration:6.2s;animation-delay:0.2s">
+              <g fill="none" stroke-width="3" stroke-linecap="round">
+                <path stroke="#ffd166" d="M170 -20 C 160 -12 150 -10 140 2" opacity="0.6"/>
+                <path stroke="#ff7b7b" d="M-170 -20 C -160 -12 -150 -10 -140 2" opacity="0.6"/>
+              </g>
+            </g>
 
-            function createSparkle() {
-                const sparkle = document.createElement('div');
-                sparkle.classList.add('sparkle');
+            <!-- central lotus / diya base -->
+            <g transform="translate(0,40)">
+              <ellipse rx="110" ry="34" fill="rgba(0,0,0,0.18)" />
+              <g transform="translate(0,-52)">
+                <path d="M0 42 C -42 32 -58 10 -54 -18 C -46 -56 -4 -70 0 -70 C 4 -70 46 -56 54 -18 C 58 10 42 32 0 42 Z" fill="#2d6a4f" opacity="0.95"/>
+                <path d="M0 36 C -28 28 -40 9 -38 -14 C -32 -45 -4 -56 0 -56 C 4 -56 32 -45 38 -14 C 40 9 28 28 0 36 Z" fill="#1ea7b8" opacity="0.98"/>
+                <!-- inner petal highlights -->
+                <path d="M0 -40 L 8 -6 L 0 -2 L -8 -6 Z" fill="#ffd166" opacity="0.92"/>
+                <!-- flame -->
+                <g transform="translate(0,-18)">
+                  <path d="M0 24 C 12 8 8 -6 0 -22 C -8 -6 -12 8 0 24 Z" fill="#ff9f43"/>
+                  <path d="M0 16 C 6 6 4 0 0 -12 C -4 0 -6 6 0 16 Z" fill="#ffd166"/>
+                </g>
+              </g>
+            </g>
 
-                // Random position on the screen
-                const x = Math.random() * window.innerWidth;
-                const y = Math.random() * (window.innerHeight - 150); // Keep above the rangoli
+            <!-- eyes of peacock - decorative circles -->
+            <g transform="translate(0,-10)">
+              <circle cx="-80" cy="-26" r="8" fill="#ffd166"/>
+              <circle cx="80" cy="-26" r="8" fill="#ffd166"/>
+            </g>
 
-                sparkle.style.left = `${x}px`;
-                sparkle.style.top = `${y}px`;
-                
-                // Random destination for the animation
-                const destX = (Math.random() - 0.5) * 200 + 'px';
-                const destY = (Math.random() - 0.5) * 200 + 'px';
+          </g>
+        </svg>
 
-                // Set CSS variables for the animation keyframe
-                sparkle.style.setProperty('--x', destX);
-                sparkle.style.setProperty('--y', destY);
+      </div>
 
-                fireworksContainer.appendChild(sparkle);
+      <!-- floating diya SVG on the left-bottom -->
+      <div class="diya" style="left:28px;bottom:28px;z-index:40;">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="50" cy="78" rx="34" ry="8" fill="rgba(0,0,0,0.18)"/>
+          <path d="M20 62 C30 55 40 46 50 44 C60 46 70 55 80 62 C72 68 28 68 20 62 Z" fill="#2b2a2a"/>
+          <path d="M36 52 C44 40 56 40 64 52 C56 56 44 56 36 52 Z" fill="#ffd166"/>
+          <path d="M50 30 C56 40 54 44 50 48 C46 44 44 40 50 30 Z" fill="#ff7b7b"/>
+        </svg>
+      </div>
 
-                // Remove the sparkle element after the animation is finished
-                setTimeout(() => {
-                    sparkle.remove();
-                }, 1000); // Matches the 'firework' animation duration
-            }
+      <!-- lantern top right -->
+      <div class="lantern" style="right:36px;top:36px;z-index:40;">
+        <svg viewBox="0 0 80 120" width="72" height="110" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="12" width="52" height="78" rx="8" fill="#ffb4a2" stroke="#ffd166" stroke-width="2"/>
+          <ellipse cx="40" cy="94" rx="24" ry="6" fill="rgba(0,0,0,0.12)"/>
+          <g fill="#ffd166"><circle cx="40" cy="46" r="6"/></g>
+        </svg>
+      </div>
 
-            // Continuously generate sparkles every 150 milliseconds
-            setInterval(createSparkle, 150);
-        });
-    </script>
+      <!-- greeting text -->
+      <div class="greeting">
+        <h1>Festival of Lights</h1>
+        <div class="typebox" id="typed">Happy Diwali!</div>
+        <div class="subtitle">Share this page — type names and press Play to greet each friend</div>
+      </div>
+
+      <div class="footer">Made with ❤️ — Send to family & friends</div>
+
+    </div>
+  </div>
+
+<script>
+// ----------------------------
+// CONFIG
+// ----------------------------
+const CONFIG = {
+  nameDelay: 2200, // ms each name stays before next
+  typingSpeed: 60, // ms per char
+  fireworksDensity: 0.9 // 0 to 1
+}
+
+// ----------------------------
+// Typing / name cycling
+// ----------------------------
+const typedEl = document.getElementById('typed');
+const input = document.getElementById('nameInput');
+const playBtn = document.getElementById('playBtn');
+const stopBtn = document.getElementById('stopBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+let names = [];
+let play = false;
+let loopTimeout = null;
+let currentIndex = 0;
+let typingTimer = null;
+
+function parseNames(raw){
+  return raw.split(',').map(s=>s.trim()).filter(Boolean);
+}
+
+async function typeMessage(msg){
+  clearTimeout(typingTimer);
+  typedEl.textContent = '';
+  for(let i=0;i<msg.length;i++){
+    typedEl.textContent = msg.slice(0,i+1);
+    await new Promise(r=>typingTimer = setTimeout(r, CONFIG.typingSpeed));
+    if(!play) return;
+  }
+}
+
+async function cycleNames(){
+  if(names.length===0) return;
+  play = true;
+  currentIndex = 0;
+  while(play){
+    const name = names[currentIndex % names.length];
+    const msg = `Happy Diwali, ${name}!`;
+    await typeMessage(msg);
+    await new Promise(r=> loopTimeout = setTimeout(r, CONFIG.nameDelay));
+    if(!play) break;
+    currentIndex++;
+  }
+}
+
+playBtn.addEventListener('click', ()=>{
+  names = parseNames(input.value || 'Friends');
+  if(names.length===0) names=['Friends'];
+  if(play) return;
+  cycleNames();
+});
+stopBtn.addEventListener('click', ()=>{ play=false; clearTimeout(loopTimeout); clearTimeout(typingTimer); typedEl.textContent='Happy Diwali!'; });
+
+// ----------------------------
+// Twinkling lights generator
+// ----------------------------
+(function makeLights(){
+  const container = document.querySelector('.lights');
+  for(let i=0;i<18;i++){
+    const b = document.createElement('div');
+    b.className='bulb';
+    b.style.left = `${6 + Math.random()*88}%`;
+    b.style.top = `${18 + Math.random()*60}px`;
+    b.style.width = `${6 + Math.random()*6}px`;
+    b.style.height = b.style.width;
+    b.style.opacity = Math.random()*0.9+0.2;
+    b.style.background = ['#ffd166','#ffb86b','#fff3b0','white'][Math.floor(Math.random()*4)];
+    b.style.animation = `twinkle ${1.5+Math.random()*2.5}s ease-in-out ${Math.random()*2}s infinite`;
+    b.style.boxShadow = '0 0 10px rgba(255,200,120,0.8)';
+    container.appendChild(b);
+  }
+  const style = document.createElement('style');
+  style.textContent = `@keyframes twinkle{0%{transform:scale(0.8);opacity:0.35}50%{transform:scale(1.15);opacity:1}100%{transform:scale(0.8);opacity:0.35}}`;
+  document.head.appendChild(style);
+})();
+
+// ----------------------------
+// Fireworks canvas (simple particle system)
+// ----------------------------
+(function(){
+  const canvas = document.getElementById('fireworks');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], fireworks = [], hue = 0;
+
+  function resize(){
+    const dpr = window.devicePixelRatio || 1;
+    W = canvas.width = canvas.clientWidth * dpr;
+    H = canvas.height = canvas.clientHeight * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // particle helpers
+  function rand(a,b){return Math.random()*(b-a)+a}
+  function createFirework(x,y){
+    const count = Math.floor(rand(18,36) * CONFIG.fireworksDensity);
+    const hueBase = Math.floor(rand(hue, hue+60));
+    for(let i=0;i<count;i++){
+      const angle = Math.random()*Math.PI*2;
+      const speed = rand(1,5);
+      particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:60+Math.random()*40,age:0,color:`hsl(${hueBase+rand(-30,30)},80%,60%)`,size:1+Math.random()*2});
+    }
+  }
+
+  function launchRandom(){
+    const x = rand(100, W/ (window.devicePixelRatio || 1) -100);
+    const y = rand(80, H/ (window.devicePixelRatio || 1) * 0.6);
+    createFirework(x,y);
+  }
+
+  function update(){
+    hue += 0.4;
+    // occasionally launch
+    if(Math.random() < 0.04) launchRandom();
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    // draw soft background stars
+    for(let i=0;i<8;i++){
+      ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.02})`;
+      ctx.fillRect(Math.random()*W, Math.random()*H, 1,1);
+    }
+    // particles
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.age++;
+      p.vy += 0.06; // gravity
+      p.x += p.vx; p.y += p.vy; p.vx *= 0.99; p.vy *= 0.99;
+      const alpha = Math.max(0,1 - p.age / p.life);
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = p.color.replace(')', `,${alpha})`).replace('hsl','hsla');
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+      if(p.age > p.life) particles.splice(i,1);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(update);
+  }
+  update();
+
+  // interactive launch on click
+  canvas.addEventListener('click', (e)=>{
+    const r = canvas.getBoundingClientRect();
+    const x = e.clientX - r.left; const y = e.clientY - r.top;
+    createFirework(x,y); hue += 30;
+  });
+})();
+
+// ----------------------------
+// Download PNG of the card area
+// ----------------------------
+downloadBtn.addEventListener('click', ()=>{
+  // render the rangoli-card area to canvas by using SVG and HTML capture approach
+  // We'll composite: background gradient + fireworks canvas + SVG + overlay text
+  const card = document.querySelector('.card');
+  const svg = document.querySelector('.peacock');
+  const canvasBg = document.getElementById('fireworks');
+  const w = Math.min(1200, window.innerWidth*0.9);
+  const h = Math.min(800, window.innerHeight*0.75);
+
+  // Create a canvas and draw a simplified capture
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+
+  // draw background
+  const grad = ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0, '#0b1020'); grad.addColorStop(1,'#061022');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+
+  // draw fireworks snapshot
+  try{
+    ctx.drawImage(canvasBg, 0, 0, w, h);
+  }catch(e){/* might cross origin; ignore */}
+
+  // draw SVG as image
+  const svgXML = new XMLSerializer().serializeToString(svg);
+  const svg64 = btoa(unescape(encodeURIComponent(svgXML)));
+  const image64 = 'data:image/svg+xml;base64,' + svg64;
+  const img = new Image();
+  img.onload = ()=>{
+    const sx = (w - img.width)/2;
+    const sy = (h - img.height)/2 - 20;
+    // scale svg to fit
+    const scale = Math.min((w*0.86)/img.width, (h*0.7)/img.height);
+    const dw = img.width*scale; const dh = img.height*scale;
+    ctx.drawImage(img, (w-dw)/2, (h-dh)/2-10, dw, dh);
+    // overlay text
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.font = '28px system-ui, Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Happy Diwali!', w/2, h - 60);
+
+    const a = document.createElement('a');
+    a.href = c.toDataURL('image/png');
+    a.download = 'happy_diwali.png';
+    a.click();
+  };
+  img.src = image64;
+});
+
+</script>
 </body>
 </html>
