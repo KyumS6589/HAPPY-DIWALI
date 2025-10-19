@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Diwali!</title>
+    
+    <style>
+        /* --- CSS STYLES (The Beauty and Animation) --- */
+        
+        /* --- General Styling --- */
+        body {
+            background: linear-gradient(to top, #0f0030, #1f0a50); /* Deep night sky background */
+            color: #ffd700; /* Gold text */
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbar from animations */
+        }
+
+        /* --- Greeting Message --- */
+        .greeting-container {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        #diwali-greeting {
+            font-size: 3.5rem;
+            font-family: 'Georgia', serif;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px #ff4500, 0 0 20px #ff4500; /* Fiery glow */
+            animation: pulse 2s infinite alternate;
+        }
+
+        .sender-message {
+            font-size: 1.2rem;
+            margin-top: -10px;
+            color: #ffcc99;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        /* --- Peacock Rangoli Styling --- */
+        .rangoli-container {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            z-index: 5;
+        }
+
+        /* Peacock Head and Body */
+        .peacock-head, .peacock-body {
+            position: absolute;
+            background: #0077b6; /* Blue body color */
+            border-radius: 50%;
+        }
+
+        .peacock-head {
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 50px;
+            border-top-right-radius: 100%;
+            border-top-left-radius: 100%;
+        }
+
+        .peacock-body {
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 150px;
+            border-radius: 50% 50% 0 0;
+        }
+
+        /* Peacock Tail (The main Rangoli effect) */
+        .peacock-tail {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            /* Subtle spinning animation */
+            animation: spin 15s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        /* Creating the Feathers using ::before and ::after */
+        .peacock-tail::before,
+        .peacock-tail::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 
+                150px 0 0 -15px #ff4500, /* Red */
+                -150px 0 0 -15px #00a676, /* Green */
+                0 150px 0 -15px #ff69b4, /* Pink */
+                0 -150px 0 -15px #ffd700, /* Gold */
+                106px 106px 0 -15px #4cc9f0, /* Blue-Cyan */
+                -106px -106px 0 -15px #f72585, /* Magenta */
+                -106px 106px 0 -15px #480ca8, /* Purple */
+                106px -106px 0 -15px #ff8c00; /* Orange */
+            
+            /* Animation for feather flicker/glow */
+            animation: feather-glow 4s infinite ease-in-out alternate;
+        }
+
+        .peacock-tail::after {
+            /* Slightly offset to create depth and more color */
+            transform: rotate(22.5deg); 
+            box-shadow: 
+                150px 0 0 -10px #ff8c00, 
+                -150px 0 0 -10px #480ca8, 
+                0 150px 0 -10px #f72585, 
+                0 -150px 0 -10px #4cc9f0, 
+                106px 106px 0 -10px #ffd700, 
+                -106px -106px 0 -10px #ff69b4, 
+                -106px 106px 0 -10px #00a676, 
+                106px -106px 0 -10px #ff4500;
+        }
+
+        @keyframes feather-glow {
+            0% { opacity: 0.8; filter: brightness(1); }
+            50% { opacity: 1; filter: brightness(1.5); }
+            100% { opacity: 0.8; filter: brightness(1); }
+        }
+
+        /* --- Firework/Sparkle Animation Styling --- */
+        .fireworks-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicking through the container */
+            z-index: 8;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            opacity: 0;
+            box-shadow: 0 0 5px #ffeb3b, 0 0 10px #fff;
+            animation: firework 1s ease-out forwards;
+        }
+
+        @keyframes firework {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) scale(0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="greeting-container">
+        <h1 id="diwali-greeting">Happy Diwali!</h1>
+        <p class="sender-message">Wishing you and your family a year filled with light, prosperity, and joy!</p>
+    </div>
+
+    <div class="rangoli-container">
+        <div class="peacock-head"></div>
+        <div class="peacock-body"></div>
+        <div class="peacock-tail">
+            </div>
+    </div>
+
+    <div class="fireworks-container"></div>
+      <script>
+        // --- JAVASCRIPT CODE (The Dynamics) ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Dynamic Greeting Message
+            
+            // ⭐ CUSTOMIZE HERE: Change the name in the quotes below!
+            const recipientName = "My All Frnds"; 
+            // Example: "My Family", "Frnds and Family", or "Dearest Sneha"
+
+            const greetingElement = document.getElementById('diwali-greeting');
+            greetingElement.textContent = `Happy Diwali to my all Frnds and Family members!`;
+
+
+            // 2. Sparkling / Firework Effect
+
+            const fireworksContainer = document.querySelector('.fireworks-container');
+
+            function createSparkle() {
+                const sparkle = document.createElement('div');
+                sparkle.classList.add('sparkle');
+
+                // Random position on the screen
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * (window.innerHeight - 150); // Keep above the rangoli
+
+                sparkle.style.left = `${x}px`;
+                sparkle.style.top = `${y}px`;
+                
+                // Random destination for the animation
+                const destX = (Math.random() - 0.5) * 200 + 'px';
+                const destY = (Math.random() - 0.5) * 200 + 'px';
+
+                // Set CSS variables for the animation keyframe
+                sparkle.style.setProperty('--x', destX);
+                sparkle.style.setProperty('--y', destY);
+
+                fireworksContainer.appendChild(sparkle);
+
+                // Remove the sparkle element after the animation is finished
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1000); // Matches the 'firework' animation duration
+            }
+
+            // Continuously generate sparkles every 150 milliseconds
+            setInterval(createSparkle, 150);
+        });
+    </script>
+</body>
+</html>
